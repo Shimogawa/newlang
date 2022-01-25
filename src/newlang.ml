@@ -1,3 +1,5 @@
+open Newlang_core
+
 let _ =
   try
     while true do
