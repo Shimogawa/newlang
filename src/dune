@@ -1,0 +1,8 @@
+(executable
+ (name newlang)
+ (libraries newlang_core))
+
+(env
+ (dev
+  (flags
+   (:standard -w -30))))
