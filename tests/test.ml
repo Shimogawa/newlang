@@ -1,4 +1,8 @@
 let () =
   let open Alcotest in
   run "newlang_core"
-    [ ("string", [ test_case "Test string" `Quick String_tests.test_str ]) ]
+    [
+      ("string", String_tests.test_cases);
+      ("function", Function_tests.test_cases);
+      ("values", Val_tests.test_cases);
+    ]
