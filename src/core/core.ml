@@ -155,8 +155,9 @@ let rec eval (expr : expr) : val_t =
     | Fun _ -> as_fun_t expr
     | Call { expr; params } -> execute_call (eval expr) params
     | If ie ->
-        if eval ie.condition |> bool_of_val then execute_stmts ie.ifstmts
-        else execute_stmts ie.elsestmts;
+        if eval ie.condition |> bool_of_val then
+          execute_stmts ~infun:false ie.ifstmts
+        else execute_stmts ~infun:false ie.elsestmts;
         States.newlang_state#last_expr_val
   in
   States.newlang_state#set_last_expr_val v;
@@ -206,13 +207,13 @@ and execute stmt =
       execute sf.init_stmt;
       while not States.newlang_state#loop_end_sig do
         if bool_of_val (eval sf.cond) then (
-          execute_stmts sf.body;
+          execute_stmts ~infun:false sf.body;
           execute sf.postexec_stmt)
         else States.newlang_state#set_loop_end_sig true
       done;
       States.newlang_state#set_last_expr_val Null
 
-and execute_stmts stmts : unit =
+and execute_stmts ?(infun = true) stmts : unit =
   match stmts with
   | [] -> (
       match States.newlang_state#last_stmt_ret_val with
@@ -220,7 +221,7 @@ and execute_stmts stmts : unit =
       | Some _ -> ())
   | [ s ] ->
       execute s;
-      execute_stmts []
+      if infun then execute_stmts [] else ()
   | s :: ss -> (
       execute s;
       match States.newlang_state#last_stmt_ret_val with
