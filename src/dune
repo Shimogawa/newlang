@@ -1,8 +1,12 @@
 (executable
  (name newlang)
+ (modes byte exe)
  (libraries newlang_core))
 
 (env
  (dev
   (flags
-   (:standard -w -30))))
+   (:standard -w -30)))
+ (release
+  (flags
+   (:standard -O3))))
